@@ -78,7 +78,7 @@ module.exports = function(opts, files, done) {
   const prefix = opts.prefix == null ? "" : opts.prefix;
 
   creds.accessKeyId = opts.accessKeyId || process.env.S3_ACCESS_KEY
-  creds.secretAccessKey = opts.secretAccessKey || process.env.S3_ACCESS_KEY
+  creds.secretAccessKey = opts.secretAccessKey || process.env.S3_SECRET_KEY
 
   var client = opts.client || new aws.S3(creds)
 
