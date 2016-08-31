@@ -5,6 +5,17 @@ const path = require('path')
 
 class BlobEmitter extends EventEmitter {}
 
+function usage() {
+  console.log("usage: store-s3-blobs [OPTIONS] <FILE>...")
+  console.log("")
+  console.log("    --prefix=blobs/     hash prefix                    (optional)")
+  console.log("    --bucket=mybucket   S3 Bucket                      (required)")
+  console.log("    --digest=sha256     hash function                  (optional, default: sha1)")
+  console.log("    --force=true        don't skip if already uploaded (optional, default: false)")
+  console.log("")
+  process.exit(1);
+}
+
 var argv = require('minimist')(process.argv.slice(2), {
   alias: {
     bucket: "b",
@@ -12,6 +23,8 @@ var argv = require('minimist')(process.argv.slice(2), {
     prefix: "p"
   }
 })
+
+if (!argv.bucket) return usage();
 
 var store = require('./')
 

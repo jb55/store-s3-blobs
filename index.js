@@ -10,9 +10,9 @@ const EventEmitter = require('events')
 
 class BlobEmitter extends EventEmitter {}
 
-function sha1sum(file, done) {
+function sha1sum(digest, file, done) {
   var fd = fs.createReadStream(file);
-  var hash = crypto.createHash('sha1');
+  var hash = crypto.createHash(digest);
   hash.setEncoding('hex');
 
   fd.on('end', function() {
@@ -41,7 +41,7 @@ function upload(opts) {
   return function uploadFile(file, done) {
     opts.emitter.emit("log", { event: "upload", file: file });
 
-    sha1sum(file, function(err, sha1) {
+    sha1sum(opts.digest, file, function(err, sha1) {
       if (err) return done(err);
       const key = opts.prefix + sha1;
 
@@ -76,6 +76,7 @@ module.exports = function(opts, files, done) {
   const force = opts.force == null ? false : opts.force;
   const emitter = opts.emitter || new BlobEmitter();
   const prefix = opts.prefix == null ? "" : opts.prefix;
+  const digest = opts.digest == null ? "sha1" : opts.digest;
 
   creds.accessKeyId = opts.accessKeyId || process.env.S3_ACCESS_KEY
   creds.secretAccessKey = opts.secretAccessKey || process.env.S3_SECRET_KEY
@@ -91,6 +92,7 @@ module.exports = function(opts, files, done) {
     force: force,
     emitter: emitter,
     prefix: prefix,
+    digest: digest,
     store: store
   }
 
